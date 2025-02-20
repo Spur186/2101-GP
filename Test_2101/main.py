@@ -1,0 +1,63 @@
+"""
+main.py
+-------
+Main entry point for the simulation of the cable-driven pen control system.
+This program starts with the pen at the center of the workspace, prompts the user
+to input a PWM value, converts it into an angle, computes a new coordinate based on
+the angle and a fixed step, clamps the coordinate to the workspace, and displays
+the new coordinate and the displacement.
+"""
+
+import time
+from controller import get_pwm_input, pwm_to_angle, PWM_MIN, PWM_MAX
+from displacement import clamp_coordinate
+from cable_control import update_coordinate
+from servo_control import simulate_servo_action
+
+# Workspace coordinate boundaries (should match displacement.py)
+COORD_X_MIN = 40.0
+COORD_X_MAX = 200.0
+COORD_Y_MIN = 40.0
+COORD_Y_MAX = 215.0
+
+# Fixed step size for each update (for example, in millimeters)
+STEP_SIZE = 5.0
+
+def main():
+    # Set starting position at the center of the workspace.
+    current_position = ((COORD_X_MIN + COORD_X_MAX) / 2, (COORD_Y_MIN + COORD_Y_MAX) / 2)
+    
+    print("=== Cable-Driven Pen Control Simulation ===")
+    print(f"Starting Position: {current_position}\n")
+    
+    while True:
+        # 1. Read the PWM value from the user.
+        pwm_value = get_pwm_input()
+        
+        # 2. Convert the PWM value to a direction angle.
+        angle = pwm_to_angle(pwm_value)
+        print(f"Converted PWM {pwm_value} to angle: {angle:.2f}°")
+        
+        # 3. Calculate the new coordinate based on current position, angle, and step size.
+        new_position = update_coordinate(current_position, angle, STEP_SIZE)
+        
+        # 4. Clamp the new position to the workspace boundaries.
+        new_position = clamp_coordinate(new_position[0], new_position[1])
+        
+        # 5. Calculate and display the displacement.
+        displacement_x = new_position[0] - current_position[0]
+        displacement_y = new_position[1] - current_position[1]
+        print(f"New desired coordinate: {new_position}")
+        print(f"Calculated displacement: (dx: {displacement_x:.2f}, dy: {displacement_y:.2f})")
+        
+        # 6. Simulate a servo (pen-lift) action (this is optional).
+        simulate_servo_action(30)  # Example: simulate lowering the pen (30°)
+        
+        # 7. Update the current position.
+        current_position = new_position
+        
+        print("\n--- Next Update ---\n")
+        time.sleep(0.1)
+
+if __name__ == "__main__":
+    main()
