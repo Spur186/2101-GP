@@ -1,12 +1,4 @@
-"""
-main.py
--------
-Main entry point for the simulation of the cable-driven pen control system.
-This program starts with the pen at the center of the workspace, prompts the user
-to input a PWM value, converts it into an angle, computes a new coordinate based on
-the angle and a fixed step, clamps the coordinate to the workspace, and displays
-the new coordinate and the displacement.
-"""
+
 
 import time
 from controller import get_pwm_input, pwm_to_angle, PWM_MIN, PWM_MAX
@@ -20,17 +12,20 @@ COORD_X_MAX = 200.0
 COORD_Y_MIN = 40.0
 COORD_Y_MAX = 215.0
 
+
 # Fixed step size for each update (for example, in millimeters)
 STEP_SIZE = 5.0
 
 def main():
+    End = 1
+
     # Set starting position at the center of the workspace.
     current_position = ((COORD_X_MIN + COORD_X_MAX) / 2, (COORD_Y_MIN + COORD_Y_MAX) / 2)
     
-    print("=== Cable-Driven Pen Control Simulation ===")
+    print("=== Simulation for Switch Adapted Art ===")
     print(f"Starting Position: {current_position}\n")
-    
-    while True:
+    #Main while loop keeps running unless user enters "n" at the end of the loop
+    while End == 1:
         # 1. Read the PWM value from the user.
         pwm_value = get_pwm_input()
         
@@ -55,9 +50,15 @@ def main():
         
         # 7. Update the current position.
         current_position = new_position
+        Question = print ("Test Again?(y/n)")
+        if Question =="n":
+            End = 0
+        else: End = 1
+
         
         print("\n--- Next Update ---\n")
         time.sleep(0.1)
+
 
 if __name__ == "__main__":
     main()

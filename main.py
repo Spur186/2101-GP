@@ -24,7 +24,6 @@ def main():
     
     # Get an initial coordinate reading (starting at center)
     x_old, y_old = clamp_coordinate(FIELD_WIDTH / 2, FIELD_HEIGHT / 2)
-    
     try:
         while True:
             # 1. Get the target coordinate from the 2D control device.

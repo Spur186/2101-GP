@@ -11,7 +11,7 @@ def get_pwm_input():
     """
     Prompt the user for a PWM value.
     
-    Returns:
+    Rreturns:
         int: The PWM value entered.
     """
     try:
